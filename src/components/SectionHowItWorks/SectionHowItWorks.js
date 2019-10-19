@@ -7,18 +7,15 @@ import { NamedLink } from '../../components';
 
 import css from './SectionHowItWorks.css';
 
-const SectionHowItWorks = props => {
-  const { rootClassName, className } = props;
-
-  const classes = classNames(rootClassName || css.root, className);
+const SectionHowItWorks = () => {
   return (
-    <div className={classes}>
+    <>
       <div className={css.title}>
         <FormattedMessage id="SectionHowItWorks.titleLineOne" />
       </div>
 
       <div className={css.steps}>
-        <div className={css.step}>
+        <div>
           <h2 className={css.stepTitle}>
             <FormattedMessage id="SectionHowItWorks.part1Title" />
           </h2>
@@ -27,7 +24,7 @@ const SectionHowItWorks = props => {
           </p>
         </div>
 
-        <div className={css.step}>
+        <div>
           <h2 className={css.stepTitle}>
             <FormattedMessage id="SectionHowItWorks.part2Title" />
           </h2>
@@ -36,7 +33,7 @@ const SectionHowItWorks = props => {
           </p>
         </div>
 
-        <div className={css.step}>
+        <div>
           <h2 className={css.stepTitle}>
             <FormattedMessage id="SectionHowItWorks.part3Title" />
           </h2>
@@ -51,7 +48,7 @@ const SectionHowItWorks = props => {
           <FormattedMessage id="SectionHowItWorks.createListingLink" />
         </NamedLink>
       </div>
-    </div>
+    </>
   );
 };
 
