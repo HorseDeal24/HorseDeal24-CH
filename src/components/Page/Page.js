@@ -187,7 +187,7 @@ class PageComponent extends Component {
 
     return (
       <div className={classes}>
-        <Iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M9VZDR4" />
+        {/* <Iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M9VZDR4" /> */}
         <Helmet
           htmlAttributes={{
             lang: intl.locale,
