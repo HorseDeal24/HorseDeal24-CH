@@ -71,6 +71,7 @@
   color: white;
   border-radius: 50%;
   flex-shrink: 0;
+  margin-top: 6px;
 }
 .stepParagraph {
   font-weight: normal;
