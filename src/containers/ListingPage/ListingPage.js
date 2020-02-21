@@ -29,11 +29,20 @@ import { richText } from '../../util/richText';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
 import { initializeCardPaymentData } from '../../ducks/stripe.duck.js';
+
+
+import { getListingsById } from '../../ducks/marketplaceData.duck';
+
 import {
   Page,
   NamedLink,
   NamedRedirect,
   LayoutSingleColumn,
+
+
+  SearchResultsPanel,
+
+
   LayoutWrapperTopbar,
   LayoutWrapperMain,
   LayoutWrapperFooter,
@@ -187,6 +196,9 @@ export class ListingPageComponent extends Component {
       sendEnquiryError,
       timeSlots,
       fetchTimeSlotsError,
+
+      listings
+
     } = this.props;
 
     const listingId = new UUID(rawParams.id);
@@ -446,6 +458,21 @@ export class ListingPageComponent extends Component {
                   className={css.bookingPanel}
                 />
               </div>
+
+
+
+              <SearchResultsPanel
+                className={css.searchListingsPanel}
+                listings={listings}
+                listingsClassName={"listingCard-three-rows"}
+                pagination={null}
+                search={null}
+                setActiveListing={() => {}}
+                wrappedWithSlider={true}
+                visibleSlides={3}
+              />
+
+
             </div>
           </LayoutWrapperMain>
           <LayoutWrapperFooter>
@@ -524,7 +551,16 @@ const mapStateToProps = state => {
     sendEnquiryError,
     enquiryModalOpenForListingId,
   } = state.ListingPage;
+
+  const {currentPageResultIds} = state.SearchPage;
+ 
   const { currentUser } = state.user;
+
+  const pageListings = getListingsById(state, currentPageResultIds)
+
+    // console.log(pageListings.map(listing => {
+    //   return listing.attributes.publicData.mainDiscipline
+    // }))
 
   const getListing = id => {
     const ref = { id, type: 'listing' };
@@ -552,6 +588,7 @@ const mapStateToProps = state => {
     fetchTimeSlotsError,
     sendEnquiryInProgress,
     sendEnquiryError,
+    listings: pageListings
   };
 };
 

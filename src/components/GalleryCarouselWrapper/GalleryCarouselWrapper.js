@@ -61,7 +61,7 @@ class GalleryCarouselWrapper extends Component {
         touchEnabled={touchEnabled}
         className={css.galleryCarouselWrapper}
         onMouseEnter={() => this.setShowArrow(true)}
-        onMouseLeave={() => this.setShowArrow(false)}
+        onMouseLeave={() => this.setShowArrow(true)}
       >
         <GalleryCarouselSlider
           pagination={pagination}
