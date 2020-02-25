@@ -4,8 +4,6 @@ import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { ListingCard, PaginationLinks } from '../../components';
 import css from './SearchResultsPanel.css';
-import { CarouselProvider } from 'pure-react-carousel';
-import { Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 
 const SearchResultsPanel = props => {
   const { 
@@ -14,10 +12,7 @@ const SearchResultsPanel = props => {
     listings,
     pagination,
     search,
-    setActiveListing,
-    listingsClassName,
-    wrappedWithSlider,
-    visibleSlides 
+    setActiveListing
   } = props;
   const classes = classNames(rootClassName || css.root, className);
 
@@ -41,41 +36,13 @@ const SearchResultsPanel = props => {
     `${panelLargeWidth / 3}vw`,
   ].join(', ');
 
-  const listingsClasses = classNames(css[listingsClassName] || css.listingCard); 
-    
-  const ListingsWrapper = wrappedWithSlider && listings && (listings.length > 3) ? 
-  (
-    <CarouselProvider
-        naturalSlideWidth={100}
-        naturalSlideHeight={80}
-        totalSlides={listings.length}
-        visibleSlides={visibleSlides}
-        infinite={false}
-        dragEnabled={false}
-        touchEnabled={false}
-      >
-        <Slider className={css.sliderWrapper}>
-          {listings.map( (l, index) => (
-            <Slide index={index} key={l.id.uuid}>
-              <ListingCard
-               className={listingsClasses}
-                listing={l}
-                renderSizes={cardRenderSizes}
-                setActiveListing={setActiveListing}
-              />
-            </Slide>
-          ))}
-        </Slider>
-        <ButtonBack className={classNames(css.sliderButton, css.sliderButtonBack)}>Back</ButtonBack>
-        <ButtonNext className={classNames(css.sliderButton, css.sliderButtonNext)}>Next</ButtonNext>
-      </CarouselProvider>
-  )
-  :
-  (<>
+  return (
+    <div className={classes}>
+      <div className={css.listingCards}>
       {
         listings.map( l => (
           <ListingCard
-            className={listingsClasses}
+            className={css.listingCard}
             key={l.id.uuid}
             listing={l}
             renderSizes={cardRenderSizes}
@@ -83,12 +50,6 @@ const SearchResultsPanel = props => {
           />
         ))
       }
-    </>)
-
-  return (
-    <div className={classes}>
-      <div className={wrappedWithSlider ? css.sliderListingCards : css.listingCards}>
-        {ListingsWrapper}
         {props.children}
       </div>
       {paginationLinks}
@@ -102,9 +63,7 @@ SearchResultsPanel.defaultProps = {
   listings: [],
   pagination: null,
   rootClassName: null,
-  search: null,
-  listingsClassName: null,
-  wrappedWithSlider: false
+  search: null
 };
 
 const { array, node, object, string } = PropTypes;
@@ -115,9 +74,7 @@ SearchResultsPanel.propTypes = {
   listings: array,
   pagination: propTypes.pagination,
   rootClassName: string,
-  search: object,
-  listingsClassName: string,
-  wrappedWithSlider: PropTypes.bool
+  search: object
 };
 
 export default SearchResultsPanel;
