@@ -85,19 +85,29 @@
 .listingPageCard {
   margin-bottom: 36px;
   flex-basis: calc(100% - 30px);
-  max-width: 100%;
+
 
   @media (--viewportMedium) {
     flex-basis: calc(50% - 30px);
-    max-width: 50%;
   }
 
   @media (--viewportLarge) {
     flex-basis: calc(33.33% - 30px);
-    max-width: 33%;
   }
 
   margin: 0 15px;
+}
+
+.listingPageCardSingle {
+  max-width: 100%;
+  padding: 0 36px;
+  @media (--viewportMedium) {
+    max-width: 50%;
+  }
+
+  @media (--viewportLarge) {
+    max-width: 33%;
+  }
 }
 .sliderAnimation {
   transition: transform 0.6s;

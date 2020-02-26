@@ -251,7 +251,7 @@ export class ListingPageComponent extends Component {
     const { breed, gender, age, color, hight, mainDiscipline } = publicData;
 
     const thisListing = listings.length && listings.filter( l => l.id.uuid === listingId.uuid)[0]
-    const currentMainDiscipline = thisListing && thisListing.attributes.publicData.mainDiscipline  
+    const currentMainDiscipline = thisListing && thisListing.attributes.publicData.mainDiscipline
     const listingsWithSimilarDiscipline = thisListing && listings.filter(l => l.attributes.publicData.mainDiscipline === currentMainDiscipline && l.id.uuid !== listingId.uuid); // similar mainDiscipline but without current horse
 
     const { sliderCurrentIndex } = this.state;
@@ -260,8 +260,8 @@ export class ListingPageComponent extends Component {
     const sliderVisibleSlides = 
     isMobile && listingsWithSimilarDiscipline.length === 1 ? 1
     : isMobile && listingsWithSimilarDiscipline.length > 1 ? 1.25
-    : window.innerWidth < 768 ? 2 
-    : 3; /// 768 viewportMedium 
+    : window.innerWidth < 900 ? 2 
+    : 3; 
 
     const sliderBtnsVisible = !isMobile && (listingsWithSimilarDiscipline.length > sliderVisibleSlides);
 
@@ -493,7 +493,7 @@ export class ListingPageComponent extends Component {
                     <div className={css.sliderOuterContainer}>
                       { listingsWithSimilarDiscipline.length === 1 ? 
                         (<ListingCard
-                          rootClassName={css.listingPageCard}
+                          rootClassName={css.listingPageCardSingle}
                           listing={listingsWithSimilarDiscipline[0]}
                           renderSizes={cardRenderSizes}
                           setActiveListing={() => {}}
