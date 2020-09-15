@@ -287,9 +287,7 @@ export class CalendarPageComponent extends Component {
 
   handleDatesRenderChange = dateObj => {
     const { transaction } = this.state
-
-    console.log('dateObj ', dateObj)
-    
+    if(!transaction) return 
     this.props.onAcceptedTransactionSelect(transaction)
     .then(({ ridings, currentUserIsTransactionCustomer, currentUserIsTransactionProvider, transcationStartDate }) => { 
       const scheduledRidings = ridings ? ridings : []
