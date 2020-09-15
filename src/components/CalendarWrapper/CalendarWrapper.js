@@ -64,6 +64,8 @@ class FullCalendarWrapper extends Component {
                     eventOverlap={false}
                     firstDay={1}
                     locale={'de'}
+                    selectLongPressDelay={0}
+                    eventLongPressDelay={0}
                 />}
             </div>
         )

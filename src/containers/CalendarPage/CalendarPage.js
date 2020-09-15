@@ -137,9 +137,13 @@ export class CalendarPageComponent extends Component {
       notificationState: status || eventIdStatus.status,
     })
 
-    if(this.notificationPopup.current && typeof window !== 'undefined') {
-      this.notificationPopup.current.style.left = x - 345 + 'px'
-      this.notificationPopup.current.style.top = y + window.scrollY + 'px'
+    const windowDefined = typeof window !== 'undefined'
+    const currentRef = this.notificationPopup.current
+    const isFCTimeEl = target && target.className === 'fc-time'
+
+    if(windowDefined && currentRef) {
+      currentRef.style.left = isFCTimeEl ? x - currentRef.offsetWidth - 5 + 'px' : 0
+      currentRef.style.top = y + window.scrollY + 'px'
     }
   } 
 
@@ -430,7 +434,7 @@ export class CalendarPageComponent extends Component {
         editable={true} 
         selectable={true}
         events={scheduledRidings}
-        eventClick={this.callNotificationPopup }
+        eventClick={this.callNotificationPopup}
         select={this.scheduleTime}
         eventDrop={this.changeScheduleTime}
         eventResize={this.changeScheduleTime}
