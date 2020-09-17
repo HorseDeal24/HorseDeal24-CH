@@ -139,10 +139,10 @@ export class CalendarPageComponent extends Component {
 
     const windowDefined = typeof window !== 'undefined'
     const currentRef = this.notificationPopup.current
-    const isFCTimeEl = target && target.className === 'fc-time'
-
+    const isFCTimeEl = target && target.className === 'fc-widget-content'
+    
     if(windowDefined && currentRef) {
-      currentRef.style.left = isFCTimeEl ? x - currentRef.offsetWidth - 5 + 'px' : 0
+      currentRef.style.left = isFCTimeEl ? 0 : x - currentRef.offsetWidth - 5 + 'px'
       currentRef.style.top = y + window.scrollY + 'px'
     }
   } 
