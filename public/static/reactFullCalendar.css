@@ -5,7 +5,7 @@
 
 
 .main-calendar {
-	max-width: 1224px;
+	/* max-width: 1224px; */
 	min-width: 375px;
 	margin: auto;
 	display: flex;
@@ -13,7 +13,10 @@
 .main-calendar table {
 	border-style: hidden;
 }
-
+.main-calendar .fc-row.fc-week.fc-widget-content,
+.main-calendar .fc-row.fc-widget-header {
+	margin-right: 1px !important;
+}
 .main-calendar .fc-right {
 	font-size: 18px;
 }
@@ -82,6 +85,11 @@
 	color:rgb(26, 43, 73) !important;
 	font-size: 10px;
 } 
+.main-calendar .fc-scroller.fc-time-grid-container {
+	overflow: hidden !important;
+	height: auto !important;
+	margin-right: 1px !important;
+}
 @media screen and (max-width: 680px) {
     .main-calendar {
       flex-direction: column;
