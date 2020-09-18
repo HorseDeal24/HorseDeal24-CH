@@ -26,6 +26,8 @@ import {
   ButtonTabNavHorizontal,
   ToggleText,
   IconMessage,
+  ProfilePageInfoHolder,
+  UserRating,
 } from '../../components';
 // import SectionHostMaybe from '../ListingPage/SectionHostMaybe';
 import { TopbarContainer, NotFoundPage } from '../../containers';
@@ -95,7 +97,7 @@ export class ProfilePageComponent extends Component {
     const bio = profileUser.attributes.profile.bio;
     const hasBio = !!bio;
     const hasLocation = (publicData && publicData.location && publicData.location.search) ? publicData.location.search : null;
-    const hasOtherInfo = typeof publicData === 'object' && Object.keys(publicData).length && Object.keys(publicData).filter(v => v !== 'location')//.map(v => ({ [v]: publicData[v] }))
+    //const hasOtherInfo = typeof publicData === 'object' && Object.keys(publicData).length && Object.keys(publicData).filter(v => v !== 'location')
    
     const publicDataPresent = profileUser.attributes.profile.publicData
     const emailVerified =  publicDataPresent && profileUser.attributes.profile.publicData.emailVerified
@@ -107,56 +109,12 @@ export class ProfilePageComponent extends Component {
     const isMobileLayout = viewport.width < MAX_MOBILE_SCREEN_WIDTH;
     
     const maxBioLength = 239
-    const otherInfoConfig = {
-      age: {
-        custom: 'Alter',
-        type: 'text'
-      },
-      experience: {
-        custom: 'Erfahrung',
-        type: 'text'
-      }, 
-      language: {
-        custom: 'Sprache',
-        type: 'text'
-      }, 
-      licence: {
-        custom: 'Lizenz',
-        type: 'text'
-      }, 
-      drivingLicense: {
-        custom: 'Führerschein',
-        type: 'boolean'
-      }, 
-      auto:{
-        custom: 'Auto',
-        type: 'boolean'
-      }, 
-    }
-
+      
     const approvedDataIcon = (
       <svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
         <path d="M6.52 9.098c-.163.188-.397.3-.646.31h-.032c-.238 0-.466-.094-.635-.263L2.783 6.732c-.353-.35-.354-.92-.003-1.273.35-.353.92-.354 1.272-.004L5.794 7.19l4.59-5.278C9.287.738 7.73 0 6 0 2.686 0 0 2.686 0 6c0 3.313 2.686 6 6 6 3.313 0 6-2.687 6-6 0-.91-.21-1.772-.573-2.545L6.52 9.098z" fill="%232ECC71" fill-rule="evenodd"/>
       </svg>)
-
-      const userRatingIcon = (classNameToAdd) => (
-        <svg className={css[`${classNameToAdd}`]} width="23" height="23" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.938 8.008c-.15-.412-.544-.69-.985-.69H14.38L12.507.758C12.377.31 11.967 0 11.5 0c-.467 0-.88.31-1.006.76L8.618 7.317H1.046c-.442 0-.833.278-.983.69-.15.414-.025.876.314 1.16l5.7 4.75L3.2 21.59c-.16.43-.02.916.346 1.196.362.28.87.29 1.242.02l6.71-4.79 6.713 4.79c.375.27.88.26 1.245-.02.366-.28.504-.765.343-1.196l-2.875-7.67 5.7-4.75c.34-.284.463-.746.315-1.16" fillRule="evenodd">
-          </path>
-        </svg>
-      )
     
-    const getRating = () => {
-      let rating = userRating
-      let total = []
-      for(let i = 0; i < 5; i++) {
-        let classToAdd = (1 > rating) ? 'empty' : 'filled'
-        total.push(userRatingIcon(classToAdd))
-        --rating
-      }
-      return total
-    }  
-      
     const asideContent = (
       <div className={css.asideContent}>
         <AvatarLarge className={css.avatar} user={user} disableProfileLink />
@@ -165,14 +123,16 @@ export class ProfilePageComponent extends Component {
             <FormattedMessage id="ProfilePage.mobileHeading" values={{ name: firstName }} />
           ) : null}
         </h1>
-        <div className={css.userRatingContainer}>
-            {getRating()}
-        </div>
+          <div className={css.userRatingCotainer}>
+            <UserRating rating={userRating}/>
+          </div>
+       
         {/* <button className={css.contactButton} onClick={this.onContactUser}>
           <FormattedMessage id="ListingPage.contactAuthorButton" />
           <IconMessage />
         </button> */}
-        <NamedLink name="CalendarPage" to={{ search:'kalender' }} className={classNames(css.contactButton, !activeAndAcceptedTransactionsPresent ? css.noTransactionsAvailavleBtn : '')}>
+        
+        <NamedLink name="CalendarPage" className={classNames(css.contactButton, !activeAndAcceptedTransactionsPresent ? css.noTransactionsAvailavleBtn : '')}>
           <FormattedMessage id="ProfilePage.noTransactionsAvailavleBtn" />
         </NamedLink>
         <div className={css.contantsContainer}>
@@ -276,27 +236,16 @@ export class ProfilePageComponent extends Component {
               <ToggleText CustomTag="p" className={css.bio} maxLength={maxBioLength}>{bio}</ToggleText>
             </div> 
           )}
-        {hasOtherInfo.length && (
-          <div className={css.infoSection}>
+        <div className={css.infoSection}>
             <div className={css.infoWrapper}>
               <h3 className={classNames(css.secondaryHeader, css.primaryHeader)}>
                 <FormattedMessage id="ProfileSettingsForm.otherInfo"/>
               </h3>  
               <div className={css.otherInfoContainer}>
-                {hasOtherInfo.map(i => {
-                  if(otherInfoConfig[i]) {
-                    return (
-                      <div className={css.otherInfoItem}>
-                        <div>{otherInfoConfig[i].custom}</div>
-                        <div>{otherInfoConfig[i].type === 'boolean' ? (!publicData[i] ? 'Nein' : 'Ja') : publicData[i]}</div>
-                      </div>
-                    )
-                  }
-                })}
+                <ProfilePageInfoHolder publicData={publicData}/>
               </div>
             </div>
           </div>
-        )}
         {hasListings ? (
           <div className={listingsContainerClasses}>
             <h2 className={css.listingsTitle}>

@@ -56,6 +56,8 @@ export { default as ResponsiveImage } from './ResponsiveImage/ResponsiveImage';
 export { default as UserDisplayName } from './UserDisplayName/UserDisplayName';
 export { default as ValidationError } from './ValidationError/ValidationError';
 export { default as ToggleText } from './ToggleText/ToggleText';
+export { ProfilePageInfoHolder as ProfilePageInfoHolder } from './ProfilePageInfoHolder/ProfilePageInfoHolder';
+export { UserRating as UserRating } from './UserRating/UserRating';
 
 // GalleryCarousel
 export {default as GalleryCarouselSlider} from './GalleryCarouselSlider/GalleryCarouselSlider';

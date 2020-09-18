@@ -99,13 +99,13 @@
     margin: 0;
 
     /* Gutter between inputs (when calendar is not visible) */
-    & .startDateLabel,
+    /* & .startDateLabel,
     & .endDateLabel {
       flex-basis: calc(50% - 12px);
-    }
+    } */
 
     & .input {
-      flex-basis: calc(50% - 12px);
+      /* flex-basis: calc(50% - 12px); */
       transition: all 0.15s ease-out;
     }
   }

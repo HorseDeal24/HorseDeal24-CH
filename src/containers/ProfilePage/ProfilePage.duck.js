@@ -190,13 +190,14 @@ export const getUserReview = userId => (dispatch, getState, sdk) => {
   return sdk.reviews.query({
     subjectId: userId
   }).then(response => {
+    const data = response.data.data.filter(s => typeof s.attributes.rating === 'number')
     const getRating = (data) => {
         let total = data.length
         let sum = 0
         data.forEach(r => sum += r.attributes.rating ? r.attributes.rating : 0)
         return !sum ? 0 : sum / total 
     }
-    const rating = (response.data.data && response.data.data.length) ? getRating(response.data.data) : 0
+    const rating = (data && data.length) ? getRating(data) : 0
     dispatch(getUserReviewSuccess(rating))
   })
   .catch(_ => {

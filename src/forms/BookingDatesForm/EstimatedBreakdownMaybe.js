@@ -31,17 +31,25 @@ import Decimal from 'decimal.js';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { dateFromLocalToAPI, nightsBetween, daysBetween } from '../../util/dates';
 import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
-import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, LINE_ITEM_UNITS, DATE_TYPE_DATE } from '../../util/types';
+import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, LINE_ITEM_UNITS, DATE_TYPE_DATE, LINE_ITEM_CUSTOMER_COMMISSION } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
 
 import css from './BookingDatesForm.css';
-
+import config from '../../config';
+const CURRENCY = config.currency;
 const { Money, UUID } = sdkTypes;
 
-const estimatedTotalPrice = (unitPrice, unitCount) => {
+const commission = vl => vl / 100 * 10
+
+const estimatedTotalPrice = (unitPrice, unitCount, commissionFlag) => {
   const numericPrice = convertMoneyToNumber(unitPrice);
-  const numericTotalPrice = new Decimal(numericPrice).times(unitCount).toNumber();
+
+  const numericTotalPrice = new Decimal(numericPrice)
+  .times(unitCount)
+  .plus(commissionFlag ? commission(numericPrice * unitCount) : 0)
+  .toNumber();
+  
   return new Money(
     convertUnitToSubUnit(numericTotalPrice, unitDivisor(unitPrice.currency)),
     unitPrice.currency
@@ -64,6 +72,8 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
 
   const totalPrice = estimatedTotalPrice(unitPrice, unitCount);
 
+  const totalPriceCommission = estimatedTotalPrice(unitPrice, unitCount, true);
+
   // bookingStart: "Fri Mar 30 2018 12:00:00 GMT-1100 (SST)" aka "Fri Mar 30 2018 23:00:00 GMT+0000 (UTC)"
   // Server normalizes night/day bookings to start from 00:00 UTC aka "Thu Mar 29 2018 13:00:00 GMT-1100 (SST)"
   // The result is: local timestamp.subtract(12h).add(timezoneoffset) (in eg. -23 h)
@@ -79,7 +89,7 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
       .startOf('day')
       .toDate()
   );
-
+    
   return {
     id: new UUID('estimated-transaction'),
     type: 'transaction',
@@ -87,7 +97,7 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
       createdAt: now,
       lastTransitionedAt: now,
       lastTransition: TRANSITION_REQUEST_PAYMENT,
-      payinTotal: totalPrice,
+      payinTotal: totalPriceCommission,
       payoutTotal: totalPrice,
       lineItems: [
         {
@@ -96,6 +106,14 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
           unitPrice: unitPrice,
           quantity: new Decimal(unitCount),
           lineTotal: totalPrice,
+          reversal: false,
+        },
+        {
+          code: LINE_ITEM_CUSTOMER_COMMISSION,
+          includeFor: ['customer'],
+          percentage: new Decimal(10),
+          unitPrice: new Money(commission(totalPrice.amount), CURRENCY),
+          lineTotal: new Money(commission(totalPrice.amount), CURRENCY),
           reversal: false,
         },
       ],
@@ -119,16 +137,16 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
 };
 
 const EstimatedBreakdownMaybe = props => {
-  const { unitType, unitPrice, startDate, endDate, quantity } = props.bookingData;
+  const { unitType, unitPrice, startDate, endDate, quantity, } = props.bookingData;
   const isUnits = unitType === LINE_ITEM_UNITS;
   const quantityIfUsingUnits = !isUnits || Number.isInteger(quantity);
   const canEstimatePrice = startDate && endDate && unitPrice && quantityIfUsingUnits;
   if (!canEstimatePrice) {
     return null;
   }
-
+  
   const tx = estimatedTransaction(unitType, startDate, endDate, unitPrice, quantity);
-
+ 
   return (
     <BookingBreakdown
       className={css.receipt}

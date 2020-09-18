@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -15,6 +15,7 @@ import { txIsPaymentPending } from '../../util/transaction';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { isScrollingDisabled, manageDisableScrolling } from '../../ducks/UI.duck';
 import { initializeCardPaymentData } from '../../ducks/stripe.duck.js';
+import { getAcceptedAndActiveTransactionsData } from '../CalendarPage/CalendarPage.duck.js';
 import {
   NamedRedirect,
   TransactionPanel,
@@ -79,12 +80,17 @@ export const TransactionPageComponent = props => {
     processTransitions,
     callSetInitialValues,
     onInitializeCardPaymentData,
+    userRating,
+    acceptedAndActiveTransactions,
+    onAcceptedTransactionSelect,
   } = props;
 
   const currentTransaction = ensureTransaction(transaction);
   const currentListing = ensureListing(currentTransaction.listing);
   const isProviderRole = transactionRole === PROVIDER;
   const isCustomerRole = transactionRole === CUSTOMER;
+
+  useEffect(() => { onAcceptedTransactionSelect() }, []);
 
   const redirectToCheckoutPageWithInitialValues = (initialValues, listing) => {
     const routes = routeConfiguration();
@@ -134,7 +140,7 @@ export const TransactionPageComponent = props => {
   // Customer can create a booking, if the tx is in "enquiry" state.
   const handleSubmitBookingRequest = values => {
     const { bookingDates, ...bookingData } = values;
-
+    
     const initialValues = {
       listing: currentListing,
       // enquired transaction should be passed to CheckoutPage
@@ -244,6 +250,8 @@ export const TransactionPageComponent = props => {
       onSubmitBookingRequest={handleSubmitBookingRequest}
       timeSlots={timeSlots}
       fetchTimeSlotsError={fetchTimeSlotsError}
+      userRating={userRating}
+      acceptedAndActiveTransactions={acceptedAndActiveTransactions}
     />
   ) : (
     loadingOrFailedFetching
@@ -350,6 +358,8 @@ const mapStateToProps = state => {
     processTransitions,
   } = state.TransactionPage;
   const { currentUser } = state.user;
+  const { userRating } = state.ProfilePage;
+  const { acceptedAndActiveTransactions } = state.CalendarPage;
 
   const transactions = getMarketplaceEntities(state, transactionRef ? [transactionRef] : []);
   const transaction = transactions.length > 0 ? transactions[0] : null;
@@ -377,6 +387,8 @@ const mapStateToProps = state => {
     timeSlots,
     fetchTimeSlotsError,
     processTransitions,
+    userRating,
+    acceptedAndActiveTransactions,
   };
 };
 
@@ -392,6 +404,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(sendReview(role, tx, reviewRating, reviewContent)),
     callSetInitialValues: (setInitialValues, values) => dispatch(setInitialValues(values)),
     onInitializeCardPaymentData: () => dispatch(initializeCardPaymentData()),
+    onAcceptedTransactionSelect: () => dispatch(getAcceptedAndActiveTransactionsData())
   };
 };
 

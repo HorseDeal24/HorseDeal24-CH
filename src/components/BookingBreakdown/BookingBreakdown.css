@@ -55,6 +55,7 @@
 
 .dayInfo {
   @apply --marketplaceButtonFontStyles;
+  margin-left: 7px;
 }
 
 .subTotalLineItem {

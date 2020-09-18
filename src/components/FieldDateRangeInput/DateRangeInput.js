@@ -153,8 +153,8 @@ class DateRangeInputComponent extends Component {
 
   onDatesChange(dates) {
     const { unitType, timeSlots } = this.props;
-    const { startDate, endDate } = dates;
-
+    const { startDate} = dates; 
+    const endDate = moment(startDate).add(1, 'month')
     // both dates are selected, a new start date before the previous start
     // date is selected
     const startDateUpdated =
@@ -178,11 +178,23 @@ class DateRangeInputComponent extends Component {
     }));
 
     this.props.onChange({ startDate: startDateAsDate, endDate: endDateAsDate });
+
+    setTimeout(() => {
+      this.onFocusChange()
+    })
   }
 
   onFocusChange(focusedInput) {
     // DateRangePicker requires 'onFocusChange' function and 'focusedInput'
     // but Fields of React-Form deals with onFocus & onBlur instead
+
+    if(focusedInput === 'startDate' && this.state.currentStartDate) {
+      this.setState({ currentStartDate: null });
+      this.props.onChange({ startDate: null, endDate: null });
+    }
+    if(focusedInput === 'endDate') {
+      return
+    }
     this.setState({ focusedInput });
 
     if (focusedInput) {
@@ -247,9 +259,9 @@ class DateRangeInputComponent extends Component {
     const startDatePlaceholderTxt =
       startDatePlaceholderText ||
       intl.formatMessage({ id: 'FieldDateRangeInput.startDatePlaceholderText' });
-    const endDatePlaceholderTxt =
-      endDatePlaceholderText ||
-      intl.formatMessage({ id: 'FieldDateRangeInput.endDatePlaceholderText' });
+    // const endDatePlaceholderTxt =
+    //   endDatePlaceholderText ||
+    //   intl.formatMessage({ id: 'FieldDateRangeInput.endDatePlaceholderText' });
     const screenReaderInputText =
       screenReaderInputMessage ||
       intl.formatMessage({ id: 'FieldDateRangeInput.screenReaderInputMessage' });
@@ -275,7 +287,7 @@ class DateRangeInputComponent extends Component {
           minimumNights={isDaily ? 0 : 1}
           onDatesChange={this.onDatesChange}
           startDatePlaceholderText={startDatePlaceholderTxt}
-          endDatePlaceholderText={endDatePlaceholderTxt}
+          //endDatePlaceholderText={endDatePlaceholderTxt}
           screenReaderInputMessage={screenReaderInputText}
           phrases={{ closeDatePicker: closeDatePickerText, clearDate: clearDateText }}
           isDayBlocked={isDayBlocked}
@@ -312,13 +324,13 @@ DateRangeInputComponent.propTypes = {
   }),
   useMobileMargins: bool,
   startDatePlaceholderText: string,
-  endDatePlaceholderText: string,
+  endDatePlaceholderText: string, 
   screenReaderInputMessage: string,
   value: shape({
     startDate: instanceOf(Date),
     endDate: instanceOf(Date),
   }),
-  timeSlots: arrayOf(propTypes.timeSlot),
+  timeSlots: arrayOf(propTypes.timeSlot), 
 };
 
 export default injectIntl(DateRangeInputComponent);
