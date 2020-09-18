@@ -28,7 +28,7 @@ const IconArrowHead = props => {
         className={classes}
         width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M11.5 7L20.5 16L11.5 25" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11.5 7L20.5 16L11.5 25" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     );
   } else if (isLeft && isSmall) {
@@ -37,7 +37,7 @@ const IconArrowHead = props => {
         className={classes}
         width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M20.5 7L11.5 16L20.5 25" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20.5 7L11.5 16L20.5 25" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     );
   } else if (isDown && isSmall) {

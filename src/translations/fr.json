@@ -65,6 +65,7 @@
   "BookingDatesForm.priceBreakdownTitle": "Détails de la réservation",
   "BookingDatesForm.requestToBook": "Réserver",
   "BookingDatesForm.expertLink": "not translated",
+  "BookingDatesForm.calendarLink": "Zum gemeinsamen Kalender",
   "BookingDatesForm.requiredDate": "Oups, vérifiez que la date est correcte",
   "BookingDatesForm.timeSlotsError": "Le chargement des disponibilités pour cette annonce a échoué. Veuillez rafraîchir la page.",
   "BookingDatesForm.youWontBeChargedInfo": "Avez-vous besoin d'aide pour trouver le bon cheval?",

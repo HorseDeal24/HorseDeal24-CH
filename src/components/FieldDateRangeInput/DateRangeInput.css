@@ -55,6 +55,13 @@
     justify-content: space-between;
     border: none;
     background: none;
+
+    & > div:last-of-type {
+      display: none;
+    }
+    & > div:first-of-type {
+      width: 100%;
+    }
   }
   & :global(.DayPicker__horizontal) {
     margin: 0 auto;

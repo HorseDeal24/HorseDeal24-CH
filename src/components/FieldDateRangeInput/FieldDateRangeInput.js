@@ -105,14 +105,14 @@ class FieldDateRangeInputComponent extends Component {
     });
 
     const label =
-      startDateLabel && endDateLabel ? (
+      startDateLabel ? (
         <div className={classNames(css.labels, { [css.mobileMargins]: useMobileMargins })}>
           <label className={startDateLabelClasses} htmlFor={startDateId}>
             {startDateLabel}
           </label>
-          <label className={endDateLabelClasses} htmlFor={endDateId}>
+          {/* <label className={endDateLabelClasses} htmlFor={endDateId}>
             {endDateLabel}
-          </label>
+          </label> */}
         </div>
       ) : null;
 
@@ -143,7 +143,7 @@ class FieldDateRangeInputComponent extends Component {
           })}
         >
           <div className={startDateBorderClasses} />
-          <div className={endDateBorderClasses} />
+          {/* <div className={endDateBorderClasses} /> */}
         </div>
         <ValidationError className={errorClasses} fieldMeta={meta} />
       </div>

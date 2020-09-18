@@ -1,0 +1,15 @@
+.userRatingContainer {
+    
+    & > svg {
+      margin-right: 5px;
+    }
+    & > svg:last-child {
+      margin-right: 0;
+    }
+  }
+  .filled {
+    fill: gold;
+  }
+  .empty {
+    fill: #B2B2B2;
+  }

@@ -21,7 +21,7 @@ import {
 } from '../../util/data';
 import { addMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { fetchCurrentUserNotifications } from '../../ducks/user.duck';
-
+import { getUserReview } from '../ProfilePage/ProfilePage.duck'
 const { UUID } = sdkTypes;
 
 const MESSAGES_PAGE_SIZE = 100;
@@ -258,7 +258,7 @@ const listingRelationship = txResponse => {
 export const fetchTransaction = (id, txRole) => (dispatch, getState, sdk) => {
   dispatch(fetchTransactionRequest());
   let txResponse = null;
-
+  
   return sdk.transactions
     .show(
       {
@@ -278,8 +278,9 @@ export const fetchTransaction = (id, txRole) => (dispatch, getState, sdk) => {
       },
       { expand: true }
     )
-    .then(response => {
+    .then(async response => {
       txResponse = response;
+  
       const listingId = listingRelationship(response).id;
       const entities = updatedEntities({}, response.data);
       const listingRef = { id: listingId, type: 'listing' };
@@ -287,7 +288,16 @@ export const fetchTransaction = (id, txRole) => (dispatch, getState, sdk) => {
       const denormalised = denormalisedEntities(entities, [listingRef, transactionRef]);
       const listing = denormalised[0];
       const transaction = denormalised[1];
+      const user = getState().user
+      
+      // fetch rating of other transaction party
+      if(user && user.currentUser) {
+        const currentUserId = user.currentUser.id.uuid
+        const ratingId = [transaction.customer.id.uuid, transaction.provider.id.uuid].filter(i => i !== currentUserId)[0]
+        await dispatch(getUserReview(ratingId))
+      }
 
+      
       // Fetch time slots for transactions that are in enquired state
       const canFetchTimeslots =
         txRole === 'customer' &&

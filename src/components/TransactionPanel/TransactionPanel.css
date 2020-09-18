@@ -31,7 +31,7 @@
     flex-shrink: 1;
     margin-right: 56px;
     margin-bottom: 0;
-    margin: 123px 0 0 0;
+    margin: 53px 0 0 0;
   }
 }
 
@@ -232,7 +232,65 @@
     z-index: 1;
   }
 }
+.otherPartyWrapper {
+  display: flex;
+  align-items: center;
+}
+.otherPartySection {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: flex-start;
 
+  @media (--viewportMedium) {
+    flex-direction: row;
+    align-items: center;  
+  }
+}
+.otherPartyAvatarSection {
+  margin-right: 31px;
+}
+.otherPartyName {
+  font-weight: 600;
+  font-size: 35px;
+  line-height: 35px;
+  color: var(--marketplaceColor);
+  position: relative;
+  padding-right: 22px;
+
+  &:after {
+    content: '.';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: -20%;
+  }
+}
+.otherPartyRating {
+  margin: 6px 0 11px 0;
+
+  @media (--viewportMedium) {
+    margin: 0 23px;
+  }
+}
+.otherPartyTotalRating {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 13px;
+  color: var(--marketplaceColor);
+  margin: 10px 0;
+  @media (--viewportMedium) {
+    margin: 10px 0 0 0;
+  }
+}
+.otherPartyLocation {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+  color: #B2B2B2;
+  margin-top: 0;
+}
 /* DetailCardHeadingsMaybe subcomponent */
 .detailCardHeadings {
   display: none;
@@ -590,7 +648,12 @@
   }
 }
 
-
+.contactButton {
+  @apply --marketplaceButtonStylesPrimary;
+}
+.noTransactionsAvailavleBtn {
+  @apply --marketplaceNotActiveBtnStyles;
+}
 .bookingDatesSubmitButtonWrapper {
   flex-shrink: 0;
   padding: 0 24px 24px 24px;

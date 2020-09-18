@@ -119,12 +119,13 @@ export class BookingDatesFormComponent extends Component {
                   unitPrice,
                   startDate,
                   endDate,
-
+                  
                   // NOTE: If unitType is `line-item/units`, a new picker
                   // for the quantity should be added to the form.
                   quantity: 1,
                 }
               : null;
+              
           const bookingInfo = bookingData ? (
             <div className={css.priceBreakdownContainer}>
               <h3 className={css.priceBreakdownTitle}>
@@ -165,7 +166,7 @@ export class BookingDatesFormComponent extends Component {
                 startDateLabel={bookingStartLabel}
                 startDatePlaceholderText={startDatePlaceholderText}
                 endDateId={`${formId}.bookingEndDate`}
-                endDateLabel={bookingEndLabel}
+                //endDateLabel={bookingEndLabel}
                 endDatePlaceholderText={endDatePlaceholderText}
                 focusedInput={this.state.focusedInput}
                 onFocusedInputChange={this.onFocusedInputChange}

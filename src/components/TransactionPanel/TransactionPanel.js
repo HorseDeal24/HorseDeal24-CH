@@ -31,6 +31,8 @@ import {
   NamedLink,
   ReviewModal,
   UserDisplayName,
+  ProfilePageInfoHolder,
+  UserRating,
 } from '../../components';
 import { BookingDatesForm, SendMessageForm } from '../../forms';
 import config from '../../config';
@@ -94,10 +96,12 @@ const displayNames = (currentUser, currentProvider, currentCustomer, intl) => {
   if (currentUserIsCustomer) {
     otherUserDisplayName = authorDisplayName;
     otherUserDisplayNameString = userDisplayNameAsString(currentProvider, '');
+    
   } else if (currentUserIsProvider) {
     otherUserDisplayName = customerDisplayName;
     otherUserDisplayNameString = userDisplayNameAsString(currentCustomer, '');
   }
+  otherUserDisplayNameString = otherUserDisplayNameString.split(" ").slice(0,1)[0] 
 
   return {
     authorDisplayName,
@@ -240,21 +244,29 @@ export class TransactionPanelComponent extends Component {
       timeSlots,
       fetchTimeSlotsError,
       nextTransitions,
+      userRating,
+      acceptedAndActiveTransactions,
     } = this.props;
-
+    
     const currentTransaction = ensureTransaction(transaction);
     const currentListing = ensureListing(currentTransaction.listing);
     const currentProvider = ensureUser(currentTransaction.provider);
     const currentCustomer = ensureUser(currentTransaction.customer);
-    
+
     if(currentListing.attributes.deleted || currentProvider.attributes.deleted || currentCustomer.attributes.deleted) {
       return <div className={css.genericError}>Either provider or customer has been deleted</div>
     }
     
     const isCustomer = transactionRole === 'customer';
     const isProvider = transactionRole === 'provider';
+
+    const transactionRolePublicData = isCustomer ? currentProvider.attributes.profile.publicData : currentCustomer.attributes.profile.publicData
+    const hasLocation = (transactionRolePublicData && transactionRolePublicData.location && transactionRolePublicData.location.search) ? transactionRolePublicData.location.search : null;  
+
     const transactionProviderID = currentProvider ? currentProvider.id.uuid : null;
     const transactionCustomerID = transaction.customer ? transaction.customer.id.uuid : null;
+
+    const activeAndAcceptedTransactionsPresent = acceptedAndActiveTransactions && acceptedAndActiveTransactions.length
 
     const listingLoaded = !!currentListing.id;
     const listingDeleted = listingLoaded && currentListing.attributes.deleted;
@@ -391,7 +403,7 @@ export class TransactionPanelComponent extends Component {
 
     const sendMessagePlaceholder = intl.formatMessage(
       { id: 'TransactionPanel.sendMessagePlaceholder' },
-      { name: otherUserDisplayNameString.split(" ").slice(0,1)[0] }
+      { name: otherUserDisplayNameString }
     );
 
     const sendingMessageNotAllowed = intl.formatMessage({
@@ -414,24 +426,35 @@ export class TransactionPanelComponent extends Component {
       <div className={classes}>
         <div className={css.container}>
           <div className={css.txInfo}>
-            <button className={css.backBtn} onClick={this.goBack}>
-              <FormattedMessage id="TransactionPanel.backButtonLabel" />
-            </button>
-            <DetailCardImage
-              rootClassName={css.imageWrapperMobile}
-              avatarWrapperClassName={css.avatarWrapperMobile}
-              listingTitle={listingTitle}
-              image={firstImage}
-              provider={currentProvider}
-              isCustomer={isCustomer}
-            />
-            {isProvider ? (
-              <div className={css.avatarWrapperProviderDesktop}>
-                <AvatarLarge user={currentCustomer} className={css.avatarDesktop} />
+            <div className={css.otherPartyWrapper}>
+              <div className={css.otherPartyAvatarSection}>
+                <div className={css.avatarWrapperProviderDesktop}>
+                  <AvatarLarge user={isCustomer ? currentProvider : currentCustomer} className={css.avatarDesktop} />
+                </div>
               </div>
-            ) : null}
-
-            <PanelHeading
+              <div>
+                <div className={css.otherPartySection}>
+                    <h3 className={css.otherPartyName}>
+                      {otherUserDisplayNameString}
+                    </h3>
+                    <div className={css.otherPartyRating}>
+                      <UserRating rating={userRating}/>
+                    </div>
+                    <p className={css.otherPartyTotalRating}>{userRating} Bewertung</p>
+                </div>
+                <div>
+                  {hasLocation && <p className={css.otherPartyLocation}>{hasLocation}</p> }
+                </div>
+                <div className={css.otherPartySection}> 
+                  <ProfilePageInfoHolder publicData={transactionRolePublicData}/>
+                </div>
+              </div>
+            </div>    
+            {/* <button className={css.backBtn} onClick={this.goBack}>
+              <FormattedMessage id="TransactionPanel.backButtonLabel" />
+            </button> */}
+            
+            {/* <PanelHeading
               panelHeadingState={stateData.headingState}
               transactionRole={transactionRole}
               providerName={authorDisplayName}
@@ -443,7 +466,7 @@ export class TransactionPanelComponent extends Component {
               listingDeleted={listingDeleted}
               substitutionalLinkText={substitutionalLinkText}
               providerID={transactionProviderID}
-            />
+            /> */}
 
             <div className={css.bookingDetailsMobile}>
               <AddressLinkMaybe
@@ -511,14 +534,14 @@ export class TransactionPanelComponent extends Component {
                   />
               </IsWrappedWithLink>
 
-              <DetailCardHeadingsMaybe
+              {/* <DetailCardHeadingsMaybe
                 showDetailCardHeadings={stateData.showDetailCardHeadings}
                 listingTitle={listingTitle}
                 subTitle={bookingSubTitle}
                 location={location}
                 geolocation={geolocation}
                 showAddress={stateData.showAddress}
-              />
+              /> */}
 
               <div className={css.bookExpertWrapper}>
                 <div className={css.bookingHeading}>
@@ -543,11 +566,9 @@ export class TransactionPanelComponent extends Component {
                   <FormattedMessage id={'BookingDatesForm.youWontBeChargedInfo'} />
                 </p>*/}
                 <div className={css.bookingDatesSubmitButtonWrapper}>
-                  <a href="https://calendly.com/horsedeal24" target="_blank">
-                    <PrimaryButton type="submit">
-                      <FormattedMessage id="BookingDatesForm.expertLink" />
-                    </PrimaryButton>
-                  </a>
+                  <NamedLink name="CalendarPage" className={classNames(css.contactButton, !activeAndAcceptedTransactionsPresent ? css.noTransactionsAvailavleBtn : '')}>
+                    <FormattedMessage id="ProfilePage.noTransactionsAvailavleBtn" />
+                  </NamedLink>
                 </div>
               </div>
             </div>
@@ -557,11 +578,9 @@ export class TransactionPanelComponent extends Component {
               <div className={css.priceValue}>{formatMoney(intl, price)}</div>
               {intl.formatMessage({ id: unitTranslationKey })}</div>
               <div className={css.bookingDatesSubmitButtonWrapper}>
-                <a href="https://calendly.com/horsedeal24" className target="_blank">
-                  <PrimaryButton type="submit">
-                    <FormattedMessage id="BookingDatesForm.expertLink" />
-                  </PrimaryButton>
-                </a>
+                <NamedLink name="CalendarPage" className={classNames(css.contactButton, !activeAndAcceptedTransactionsPresent ? css.noTransactionsAvailavleBtn : '')}>
+                  <FormattedMessage id="ProfilePage.noTransactionsAvailavleBtn" />
+                </NamedLink>
               </div>
               <BreakdownMaybe
                 className={css.breakdownContainer}
@@ -633,7 +652,7 @@ TransactionPanelComponent.propTypes = {
   timeSlots: arrayOf(propTypes.timeSlot),
   fetchTimeSlotsError: propTypes.error,
   nextTransitions: array,
-
+  acceptedAndActiveTransactions: array,
   // Sale related props
   onAcceptSale: func.isRequired,
   onDeclineSale: func.isRequired,

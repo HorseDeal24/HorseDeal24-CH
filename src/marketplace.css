@@ -497,6 +497,15 @@
         margin-left: 20px;
       }
     }
+
+    --marketplaceNotActiveBtnStyles {
+      background-color: #B2B2B2;
+      text-decoration: none !important;
+      &:hover, &:focus {
+        background-color: #B2B2B2;
+      }
+    }
+    
   /* Modal Close icon */
   --marketplaceModalCloseStyles {
     /* Position inside modal */
