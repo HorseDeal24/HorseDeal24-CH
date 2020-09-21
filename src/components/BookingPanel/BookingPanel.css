@@ -141,7 +141,6 @@
   padding: 18px 24px 18px 16px;
   background-color: var(--matterColorLight);
   box-shadow: var(--boxShadowTop);
-  display: flex;
 
   /* Contain repainting to this component only */
   /* 3D painting container helps scrolling */

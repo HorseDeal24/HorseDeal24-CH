@@ -513,7 +513,7 @@ export class TransactionPanelComponent extends Component {
             ) : (
               <div className={css.sendingMessageNotAllowed}>{sendingMessageNotAllowed}</div>
             )}
-
+            
             {stateData.showSaleButtons ? (
               <div className={css.mobileActionButtons}>{saleButtons}</div>
             ) : null}
@@ -574,6 +574,19 @@ export class TransactionPanelComponent extends Component {
             </div>
 
             <div className={css.openBookingForm}>
+            {showBookingDatesForm ? (
+                  <BookingDatesForm
+                    className={css.bookingForm}
+                    formId="BookingPanel"
+                    submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
+                    unitType={unitType}
+                    onSubmit={onSubmitBookingRequest}
+                    price={price}
+                    isOwnListing={false}
+                    timeSlots={timeSlots}
+                    fetchTimeSlotsError={fetchTimeSlotsError}
+                  />
+                ) : null}
               <div className={css.bookingHelp}>
               <div className={css.priceValue}>{formatMoney(intl, price)}</div>
               {intl.formatMessage({ id: unitTranslationKey })}</div>

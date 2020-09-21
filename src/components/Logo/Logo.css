@@ -6,7 +6,7 @@
   }
   height: 40px;
   @media (--viewportMiniSmallMax) {
-    height: auto;
-    max-width: 178px;
+    height: 40px;
+    /* max-width: 178px; */
   }
 }
