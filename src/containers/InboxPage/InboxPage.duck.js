@@ -82,8 +82,8 @@ const fetchOrdersOrSalesError = e => ({
   payload: e,
 });
 
-const addAllUserMessagesSuccess = (messages) => ({ type: ADD_ALL_USER_MESSAGES_SUCCESS, payload: messages })
-const addAllUserMessagesFailure = (error) => ({ type: ADD_ALL_USER_MESSAGES_FAILURE, payload: error })
+const addAllUserMessagesSuccess = messages => ({ type: ADD_ALL_USER_MESSAGES_SUCCESS, payload: messages })
+const addAllUserMessagesFailure = error => ({ type: ADD_ALL_USER_MESSAGES_FAILURE, payload: error })
 // ================ Thunks ================ //
 
 const INBOX_PAGE_SIZE = 10;
@@ -125,15 +125,18 @@ export const loadData = (params, search) => (dispatch, getState, sdk) => {
   return sdk.transactions
     .query(apiQueryParams)
     .then(async response => {
-      const ids = response.data.data.map(d => sdk.messages.query({ transactionId: d.id }) )
-      
-      await Promise.all(ids)
-      .then(messages => {
-        dispatch(addAllUserMessagesSuccess(messages));
-      })
-      .catch(e => {
-        dispatch(addAllUserMessagesFailure(e));
-      })
+      try {
+        const __messages = {}
+        const ids = response.data.data.map(d => d.id)
+
+        for (const id of ids) {
+          const messages = await sdk.messages.query({ transactionId: id })
+          __messages[id.uuid] = messages.data.data
+        }
+        dispatch(addAllUserMessagesSuccess(__messages));
+      } catch(err) {
+        dispatch(addAllUserMessagesFailure(err));
+      }
       dispatch(addMarketplaceEntities(response));
       dispatch(fetchOrdersOrSalesSuccess(response));
       return response;

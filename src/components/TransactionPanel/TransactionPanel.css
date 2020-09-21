@@ -257,6 +257,9 @@
   color: var(--marketplaceColor);
   position: relative;
   padding-right: 22px;
+  max-width: 171px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:after {
     content: '.';
@@ -578,13 +581,20 @@
   padding: 18px 24px 18px 16px;
   background-color: var(--matterColorLight);
   box-shadow: var(--boxShadowTop);
-  display: grid;
+  /* display: grid; */
+  display: block;
   grid-template-columns: 1fr 5fr;
   column-gap:24px;
   /* Contain repainting to this component only */
   /* 3D painting container helps scrolling */
   transform: translate3d(0, 0, 0);
 
+  & > * {
+    max-width: 400px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
   @media (--viewportLarge) {
     display: none;
   }

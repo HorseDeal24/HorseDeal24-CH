@@ -72,7 +72,7 @@ const getDateDescription = date => {
   }
  }
 
-const formatDate = (intl, date) => {
+const formatDate = date => {
   const options = {
     weekday: "short", 
     day: "numeric",
@@ -237,9 +237,10 @@ const checkIfOneSideIsDeleted = side => {
 
 export const InboxItem = props => {
   const { unitType, type, tx, intl, stateData, lastMessage } = props;
+
   const { customer, provider } = tx;
   const isOrder = type === 'order';
-
+  
   const otherUser = isOrder ? provider : customer;
   otherUser.attributes.profile.displayName = otherUser.attributes.profile.displayName && otherUser.attributes.profile.displayName.split(' ').splice(0,1).join('')
   const otherUserDisplayName = <UserDisplayName user={otherUser} intl={intl} />;
@@ -247,7 +248,7 @@ export const InboxItem = props => {
   
   const isSaleNotification = !isOrder && txIsRequested(tx);
   const rowNotificationDot = isSaleNotification ? <div className={css.notificationDot} /> : null;
-  const lastTransitionedAt = formatDate(intl, tx.attributes.lastTransitionedAt);
+  const lastTransitionedAt = formatDate((lastMessage && lastMessage.date) || tx.attributes.lastTransitionedAt);
   const linkClasses = classNames(css.itemLink, {
     [css.bannedUserLink]: isOtherUserBanned,
   });
@@ -269,7 +270,7 @@ export const InboxItem = props => {
             {otherUserDisplayName}
           </div>
           <div className={stateData.bookingClassName}>
-            {lastMessage}
+            {lastMessage && lastMessage.content}
             </div> 
           {/* <BookingInfoMaybe
             bookingClassName={stateData.bookingClassName}
@@ -332,16 +333,16 @@ export const InboxPageComponent = props => {
   const salesTitle = intl.formatMessage({ id: 'InboxPage.salesTitle' });
   const title = isOrders ? ordersTitle : salesTitle;
 
-  const toTxItem = (tx, index) => {
+  const toTxItem = tx => {  
     const type = isOrders ? 'order' : 'sale';
     const stateData = txState(intl, tx, type);
-    const lastMessage = allUserMessages[index] && allUserMessages[index].data.data.length ? allUserMessages[index].data.data[0].attributes.content : '...'
+    const lastMessage = allUserMessages && allUserMessages[tx.id.uuid] && { content: allUserMessages[tx.id.uuid][0].attributes.content || '...', date: allUserMessages[tx.id.uuid][0].attributes.createdAt } //allUserMessages[tx.id.uuid][0].attributes.content || '...'
     const oneSideOfTransactionHasBeenDeleted = checkIfOneSideIsDeleted(tx.customer) || checkIfOneSideIsDeleted(tx.provider)
 
     // Render InboxItem only if the latest transition of the transaction is handled in the `txState` function.
     return stateData && !oneSideOfTransactionHasBeenDeleted  ? (
       <li key={tx.id.uuid} className={css.listItem}>
-        <InboxItem unitType={unitType} type={type} tx={tx} intl={intl} stateData={stateData} lastMessage={lastMessage}/>
+        <InboxItem unitType={unitType} type={type} tx={tx} intl={intl} stateData={stateData} lastMessage={lastMessage} />
       </li>
     ) : null;
   };
