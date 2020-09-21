@@ -415,3 +415,5 @@ export const reduceParagraphHeight = (elementRef, maxHeight) => {
 }
 
 export const trimLongText = (text, num) => [text.slice(0, num), '...'].join('')
+
+export const isInteget = num => +num === Math.ceil(+num)

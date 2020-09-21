@@ -4,6 +4,7 @@ import { FormattedMessage, intlShape } from '../../util/reactIntl';
 import { formatMoney } from '../../util/currency';
 import { txIsCanceled, txIsDelivered, txIsDeclined } from '../../util/transaction';
 import { propTypes } from '../../util/types';
+import { isInteget } from '../../util/data';
 
 import css from './BookingBreakdown.css';
 
@@ -35,7 +36,7 @@ const LineItemUnitPrice = props => {
       <hr className={css.totalDivider} />
       <div className={css.lineItemTotal}>
         <div className={css.totalLabel}>{totalLabel}</div>
-        <div className={css.totalPrice}>{formattedTotalPrice}</div>
+        <div className={css.totalPrice}>{isInteget(formattedTotalPrice) ? formattedTotalPrice : `${formattedTotalPrice}0`}</div>
       </div>
     </>
   );

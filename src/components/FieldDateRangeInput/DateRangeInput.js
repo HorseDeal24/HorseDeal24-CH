@@ -284,7 +284,7 @@ class DateRangeInputComponent extends Component {
           focusedInput={this.state.focusedInput}
           onFocusChange={this.onFocusChange}
           startDate={startDate}
-          displayFormat={'dddd, d. MMMM yyyy'}
+          displayFormat={'dddd, D. MMMM yyyy'}
           endDate={endDate}
           minimumNights={isDaily ? 0 : 1}
           onDatesChange={this.onDatesChange}

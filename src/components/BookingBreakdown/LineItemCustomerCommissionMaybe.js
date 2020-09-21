@@ -4,6 +4,7 @@ import { FormattedMessage, intlShape } from '../../util/reactIntl';
 import { formatMoney } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { LINE_ITEM_CUSTOMER_COMMISSION, propTypes } from '../../util/types';
+import { isInteget } from '../../util/data';
 
 import css from './BookingBreakdown.css';
 
@@ -44,7 +45,7 @@ const LineItemCustomerCommissionMaybe = props => {
         <span className={css.itemLabel}>
           <FormattedMessage id="BookingBreakdown.commission" />
         </span>
-        <span className={css.itemValue}>{formattedCommission}</span>
+        <span className={css.itemValue}>{isInteget(formattedCommission) ? formattedCommission : `${formattedCommission}0`}</span>
       </div>
     );
   }
