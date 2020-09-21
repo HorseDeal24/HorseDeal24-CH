@@ -262,9 +262,14 @@ export class TransactionPanelComponent extends Component {
 
     const transactionRolePublicData = isCustomer ? currentProvider.attributes.profile.publicData : currentCustomer.attributes.profile.publicData
     const hasLocation = (transactionRolePublicData && transactionRolePublicData.location && transactionRolePublicData.location.search) ? transactionRolePublicData.location.search : null;  
-
-    const transactionProviderID = currentProvider ? currentProvider.id.uuid : null;
-    const transactionCustomerID = transaction.customer ? transaction.customer.id.uuid : null;
+    if(transactionRolePublicData) {
+      delete transactionRolePublicData['auto']
+      delete transactionRolePublicData['drivingLicense']
+      delete transactionRolePublicData['language']
+    }
+  
+    // const transactionProviderID = currentProvider ? currentProvider.id.uuid : null;
+    // const transactionCustomerID = transaction.customer ? transaction.customer.id.uuid : null;
 
     const activeAndAcceptedTransactionsPresent = acceptedAndActiveTransactions && acceptedAndActiveTransactions.length
 

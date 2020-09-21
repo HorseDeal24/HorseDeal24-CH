@@ -29,7 +29,7 @@ const LineItemBookingPeriod = props => {
   // where there are preparation time needed between bookings.
   // Read more: https://www.sharetribe.com/api-reference/#bookings
   const { start, displayStart } = booking.attributes;
-  const formattedStartDate = moment(displayStart || start).locale('de-ch').format('dddd, d. MMMM yyyy')
+  const formattedStartDate = moment(displayStart || start).locale('de-ch').format('dddd, D. MMMM yyyy')
 
   return (
     <>
