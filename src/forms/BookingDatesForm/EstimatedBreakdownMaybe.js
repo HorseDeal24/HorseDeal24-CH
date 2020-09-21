@@ -42,12 +42,13 @@ const { Money, UUID } = sdkTypes;
 
 const commission = vl => vl / 100 * 10
 
-const estimatedTotalPrice = (unitPrice, unitCount, commissionFlag) => {
+const estimatedTotalPrice = (unitPrice, unnecessary__unitCount, commissionFlag) => {
   const numericPrice = convertMoneyToNumber(unitPrice);
 
   const numericTotalPrice = new Decimal(numericPrice)
-  .times(unitCount)
-  .plus(commissionFlag ? commission(numericPrice * unitCount) : 0)
+  //.times(unitCount)
+  .times(1)
+  .plus(commissionFlag ? commission(numericPrice * 1 /* unitCount */) : 0)
   .toNumber();
   
   return new Money(

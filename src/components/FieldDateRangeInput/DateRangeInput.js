@@ -10,6 +10,7 @@ import { DateRangePicker, isInclusivelyAfterDay, isInclusivelyBeforeDay } from '
 import { intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import moment from 'moment';
+import 'moment/locale/de-ch';
 import { START_DATE, END_DATE } from '../../util/dates';
 import { LINE_ITEM_DAY, propTypes } from '../../util/types';
 import config from '../../config';
@@ -154,7 +155,7 @@ class DateRangeInputComponent extends Component {
   onDatesChange(dates) {
     const { unitType, timeSlots } = this.props;
     const { startDate} = dates; 
-    const endDate = moment(startDate).add(1, 'month')
+    const endDate = moment(startDate).locale('de-ch').add(1, 'month')
     // both dates are selected, a new start date before the previous start
     // date is selected
     const startDateUpdated =
@@ -167,7 +168,7 @@ class DateRangeInputComponent extends Component {
     // clear the end date in case a blocked date can be found
     // between previous start date and new start date
     const clearEndDate = startDateUpdated
-      ? isBlockedBetween(timeSlots, startDate, moment(this.state.currentStartDate).add(1, 'days'))
+      ? isBlockedBetween(timeSlots, startDate, moment(this.state.currentStartDate).locale('de-ch').add(1, 'days'))
       : false;
 
     const startDateAsDate = startDate instanceof moment ? startDate.toDate() : null;
@@ -233,10 +234,10 @@ class DateRangeInputComponent extends Component {
     /* eslint-enable no-unused-vars */
 
     const isDaily = unitType === LINE_ITEM_DAY;
-    const initialStartMoment = initialDates ? moment(initialDates.startDate) : null;
-    const initialEndMoment = initialDates ? moment(initialDates.endDate) : null;
+    const initialStartMoment = initialDates ? moment(initialDates.startDate).locale('de-ch') : null;
+    const initialEndMoment = initialDates ? moment(initialDates.endDate).locale('de-ch') : null;
     const startDate =
-      value && value.startDate instanceof Date ? moment(value.startDate) : initialStartMoment;
+      value && value.startDate instanceof Date ? moment(value.startDate).locale('de-ch') : initialStartMoment;
     const endDate =
       apiEndDateToPickerDate(unitType, value ? value.endDate : null) || initialEndMoment;
 
@@ -275,7 +276,7 @@ class DateRangeInputComponent extends Component {
     const classes = classNames(css.inputRoot, className, {
       [css.withMobileMargins]: useMobileMargins,
     });
-
+   
     return (
       <div className={classes}>
         <DateRangePicker
@@ -283,11 +284,11 @@ class DateRangeInputComponent extends Component {
           focusedInput={this.state.focusedInput}
           onFocusChange={this.onFocusChange}
           startDate={startDate}
+          displayFormat={'dddd, d. MMMM yyyy'}
           endDate={endDate}
           minimumNights={isDaily ? 0 : 1}
           onDatesChange={this.onDatesChange}
           startDatePlaceholderText={startDatePlaceholderTxt}
-          //endDatePlaceholderText={endDatePlaceholderTxt}
           screenReaderInputMessage={screenReaderInputText}
           phrases={{ closeDatePicker: closeDatePickerText, clearDate: clearDateText }}
           isDayBlocked={isDayBlocked}
