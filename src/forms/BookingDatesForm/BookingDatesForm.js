@@ -128,33 +128,33 @@ export class BookingDatesFormComponent extends Component {
               
           const bookingInfo = bookingData ? (
             <div className={css.priceBreakdownContainer}>
-              <h3 className={css.priceBreakdownTitle}>
+              {/* <h3 className={css.priceBreakdownTitle}>
                 <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
-              </h3>
+              </h3> */}
               <EstimatedBreakdownMaybe bookingData={bookingData} />
             </div>
           ) : null;
 
-          const dateFormatOptions = {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-          };
+          const formatDate = date => {
+            return {
+             long: date.toLocaleDateString('de-DE', {
+               weekday: "long", 
+               day: 'numeric',
+               month: 'long',
+               year: "numeric", 
+             }),
+            }
+         }
 
           const now = moment();
           const today = now.startOf('day').toDate();
-          const tomorrow = now
-            .startOf('day')
-            .add(1, 'days')
-            .toDate();
+
           const startDatePlaceholderText =
-            startDatePlaceholder || intl.formatDate(today, dateFormatOptions);
-          const endDatePlaceholderText =
-            endDatePlaceholder || intl.formatDate(tomorrow, dateFormatOptions);
+            startDatePlaceholder || formatDate(today).long;
           const submitButtonClasses = classNames(
             submitButtonWrapperClassName || css.submitButtonWrapper
           );
-
+         
           return (
             <Form onSubmit={handleSubmit} className={classes}>
               {timeSlotsError}
@@ -167,7 +167,7 @@ export class BookingDatesFormComponent extends Component {
                 startDatePlaceholderText={startDatePlaceholderText}
                 endDateId={`${formId}.bookingEndDate`}
                 //endDateLabel={bookingEndLabel}
-                endDatePlaceholderText={endDatePlaceholderText}
+                endDatePlaceholderText={''}
                 focusedInput={this.state.focusedInput}
                 onFocusedInputChange={this.onFocusedInputChange}
                 format={identity}
@@ -179,7 +179,7 @@ export class BookingDatesFormComponent extends Component {
                 )}
               />
               {bookingInfo}
-              <p className={css.smallPrint}>
+              {/* <p className={css.smallPrint}>
                 <FormattedMessage
                   id={
                     isOwnListing
@@ -187,7 +187,7 @@ export class BookingDatesFormComponent extends Component {
                       : 'BookingDatesForm.youWontBeChargedInfo'
                   }
                 />
-              </p>
+              </p> */}
               
               <div className={submitButtonClasses}>
                 <PrimaryButton type="submit">
