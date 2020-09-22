@@ -9,7 +9,17 @@ import { ensureCurrentUser } from '../../util/data';
 import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import { isUploadImageOverLimitError } from '../../util/errors';
-import { Form, Avatar, Button, ImageFromFile, IconSpinner, FieldTextInput, LocationAutocompleteInputField, FieldCheckbox } from '../../components';
+import {
+  Form,
+  Avatar, 
+  Button, 
+  ImageFromFile, 
+  IconSpinner, 
+  FieldTextInput, 
+  LocationAutocompleteInputField, 
+  FieldCheckbox, 
+  FieldSelect
+ } from '../../components';
 
 import css from './ProfileSettingsForm.css';
 
@@ -319,42 +329,56 @@ class ProfileSettingsFormComponent extends Component {
                   <FormattedMessage id="ProfileSettingsForm.otherInfo" />
                 </h3>
                 <div className={css.otherInfoContainer}>
-                  <FieldTextInput
+                  <FieldSelect
                     className={css.otherInfo}
-                    type="text"
-                    id="age"
                     name="age"
+                    id="age"
                     label={"Alter"}
-                    placeholder={"19 Jahre"}
                     validate={fieldRequired}
-                  />
-                  <FieldTextInput
+                  >
+                    <option disabled value="">19 Jahre</option>
+                    {Array.from({ length: 66 }, (v, i) => i > 13 ? i : null).map(c => c && (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                    </FieldSelect>
+                  <FieldSelect
                     className={css.otherInfo}
-                    type="text"
                     id="licence"
                     name="licence"
                     label={"Lizenz"}
-                    placeholder={"Brevet"}
                     validate={fieldRequired}
-                  />
-                  <FieldTextInput
+                  >
+                    <option disabled value="">Brevet</option>
+                    {['Keine', 'Brevet', 'Lizenz R', 'Lizenz N'].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </FieldSelect>
+                  <FieldSelect
                     className={css.otherInfo}
                     type="text"
                     id="experience"
                     name="experience"
                     label={"Erfahrung"}
-                    placeholder={"5 Jahre"}
                     validate={fieldRequired}
-                  />
-                    <FieldTextInput
+                  >
+                    <option disabled value="">5 Jahre</option>
+                    {Array.from({ length: 31 }, (v, i) => i).map(c => c && (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </FieldSelect>
+                    <FieldSelect
                       className={css.otherInfo}
                       type="text"
                       id="language"
                       name="language"
                       label={"Sprache"}
-                      placeholder={"Deutsch"}
                       validate={fieldRequired}
-                    />
+                    >
+                    <option disabled value="">Deutsch</option>
+                    {['Deutsch', 'Englisch'].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                    </FieldSelect>
                   <FieldCheckbox
                     className={css.otherInfo}
                     type="checkbox"
