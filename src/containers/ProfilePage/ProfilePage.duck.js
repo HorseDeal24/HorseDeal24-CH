@@ -195,9 +195,10 @@ export const getUserReview = userId => (dispatch, getState, sdk) => {
         let total = data.length
         let sum = 0
         data.forEach(r => sum += r.attributes.rating ? r.attributes.rating : 0)
-        return !sum ? 0 : sum / total 
+        return (!sum ? 0 : sum / total).toFixed(2)
     }
     const rating = (data && data.length) ? getRating(data) : 0
+    
     dispatch(getUserReviewSuccess(rating))
   })
   .catch(_ => {
