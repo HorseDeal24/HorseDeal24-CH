@@ -38,6 +38,8 @@ export const SEND_ENQUIRY_REQUEST = 'app/ListingPage/SEND_ENQUIRY_REQUEST';
 export const SEND_ENQUIRY_SUCCESS = 'app/ListingPage/SEND_ENQUIRY_SUCCESS';
 export const SEND_ENQUIRY_ERROR = 'app/ListingPage/SEND_ENQUIRY_ERROR';
 
+export const SET_ACTIVE_TX_DATA = 'app/ListingPage/SET_ACTIVE_TX_DATA';
+
 // ================ Reducer ================ //
 
 const initialState = {
@@ -49,7 +51,8 @@ const initialState = {
   fetchTimeSlotsError: null,
   sendEnquiryInProgress: false,
   sendEnquiryError: null,
-  enquiryModalOpenForListingId: null
+  enquiryModalOpenForListingId: null,
+  activeTransactionId: null,
 };
 
 const listingPageReducer = (state = initialState, action = {}) => {
@@ -84,7 +87,8 @@ const listingPageReducer = (state = initialState, action = {}) => {
       return { ...state, sendEnquiryInProgress: false };
     case SEND_ENQUIRY_ERROR:
       return { ...state, sendEnquiryInProgress: false, sendEnquiryError: payload };
-
+    case SET_ACTIVE_TX_DATA: 
+      return { ...state, activeTransactionId: payload };
     default:
       return state;
   }
@@ -128,6 +132,8 @@ export const fetchTimeSlotsError = error => ({
   error: true,
   payload: error,
 });
+
+export const setActiveTransactionId = tx => ({ type: SET_ACTIVE_TX_DATA, payload: tx })
 
 export const sendEnquiryRequest = () => ({ type: SEND_ENQUIRY_REQUEST });
 export const sendEnquirySuccess = () => ({ type: SEND_ENQUIRY_SUCCESS });
@@ -262,27 +268,6 @@ export const sendEnquiry = (listingId, message) => async (dispatch, getState, sd
   const { uuid } = listingId
   const enquiriedDataFieldExists = !!getState().user.currentUser.attributes.profile.protectedData.enquiriedData
   const enquiriedData = enquiriedDataFieldExists ? getState().user.currentUser.attributes.profile.protectedData.enquiriedData : {}
-  const listingUUIDExists = enquiriedDataFieldExists && enquiriedData[uuid]
-  const transactionUUIDExists = listingUUIDExists && listingUUIDExists.transactionId
-  const transactionId = transactionUUIDExists && new UUID(transactionUUIDExists)
-
-  if(transactionId) {
-    const lastTransitionExists = await sdk.transactions.show({ id: transactionId })
-    const lastTransition = lastTransitionExists.data.data.attributes.lastTransition
-    
-    const lastTransitionInitialStage = lastTransition &&
-      (lastTransition === TRANSITION_ENQUIRE ||
-        lastTransition === TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY ||
-        lastTransition === TRANSITION_CONFIRM_PAYMENT)
-  
-    if(lastTransitionInitialStage) { 
-      return sdk.messages.send({ transactionId, content: message }).then(() => {
-        dispatch(sendEnquirySuccess());
-        dispatch(fetchCurrentUserHasOrdersSuccess(true));
-        return transactionId;
-      });
-    }
-  }
 
   const bodyParams = {
     transition: TRANSITION_ENQUIRE,
@@ -322,33 +307,37 @@ export const sendEnquiry = (listingId, message) => async (dispatch, getState, sd
  
 };
 
-export const loadData = (params, search) => dispatch => {
+export const loadData = (params, search) => async (dispatch, getState, sdk) => {
   const listingId = new UUID(params.id);
 
+  const enquiriedDataFieldExists = !!getState().user.currentUser.attributes.profile.protectedData.enquiriedData
+  const enquiriedData = enquiriedDataFieldExists ? getState().user.currentUser.attributes.profile.protectedData.enquiriedData : {}
+  const listingUUIDExists = enquiriedDataFieldExists && enquiriedData[params.id]
+  const transactionUUIDExists = listingUUIDExists && listingUUIDExists.transactionId
+  const transactionId = transactionUUIDExists && new UUID(transactionUUIDExists)
+  
+  if(transactionId) { 
+    const lastTransitionExists = await sdk.transactions.show({ id: transactionId })
+    const lastTransition = lastTransitionExists.data.data.attributes.lastTransition
+   
+    const lastTransitionInitialStage = lastTransition &&
+      (lastTransition === TRANSITION_ENQUIRE ||
+        lastTransition === TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY ||
+        lastTransition === TRANSITION_CONFIRM_PAYMENT)
+
+        if(lastTransitionInitialStage) {
+          dispatch(setActiveTransactionId(transactionId))
+        }
+  }
+  else {
+    dispatch(setActiveTransactionId(null))
+  }
+  
   const ownListingVariants = [LISTING_PAGE_DRAFT_VARIANT, LISTING_PAGE_PENDING_APPROVAL_VARIANT];
   if (ownListingVariants.includes(params.variant)) {
     return dispatch(showListing(listingId, true));
   }
 
-  // const queryParams = parse(search, {
-  //   latlng: ['origin'],
-  //   latlngBounds: ['bounds'],
-  // });
-  // const { page = 1, address, origin, ...rest } = queryParams;
-  // const originMaybe = config.sortSearchByDistance && origin ? { origin } : {};
-
-  // dispatch(searchListings({
-  //   page: 1,
-  //   perPage: 24,
-  //   include: ['author', 'author.profileImage', 'images'],
-  //   'fields.listing': ['title', 'geolocation', 'price', 'publicData'],
-  //   'fields.user': ['profile.displayName', 'profile.abbreviatedName'],
-  //   'fields.image': [
-  //     'variants.landscape-crop',
-  //     'variants.landscape-crop2x',
-  //     'variants.square-small',
-  //   ],
-  // }))
 
   if (config.enableAvailability) {
     return Promise.all([

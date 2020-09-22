@@ -146,7 +146,14 @@ export class ListingPageComponent extends Component {
   }
 
   onContactUser() {
-    const { currentUser, history, callSetInitialValues, params, location } = this.props;
+    const { currentUser, history, callSetInitialValues, params, location, activeTransactionId } = this.props;
+    const routes = routeConfiguration();
+    
+    if(activeTransactionId && activeTransactionId.uuid) {
+      history.push(
+        createResourceLocatorString('OrderDetailsPage', routes, { id: activeTransactionId.uuid }, {})
+      );
+    }
 
     if (!currentUser) {
       const state = { from: `${location.pathname}${location.search}${location.hash}` };
@@ -201,7 +208,7 @@ export class ListingPageComponent extends Component {
       sendEnquiryError,
       timeSlots,
       fetchTimeSlotsError,
-      listings
+      listings,
     } = this.props;
     const windowIsDefined = typeof window !== 'undefined'; // for server-side rendering
 
@@ -620,7 +627,8 @@ const mapStateToProps = state => {
     fetchTimeSlotsError,
     sendEnquiryInProgress,
     sendEnquiryError,
-    enquiryModalOpenForListingId
+    enquiryModalOpenForListingId,
+    activeTransactionId,
   } = state.ListingPage;
 
   const {currentPageResultIds} = state.SearchPage;
@@ -655,7 +663,8 @@ const mapStateToProps = state => {
     fetchTimeSlotsError,
     sendEnquiryInProgress,
     sendEnquiryError,
-    listings: pageListings
+    listings: pageListings,
+    activeTransactionId,
   };
 };
 
